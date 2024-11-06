@@ -53,16 +53,15 @@ export default function ProductManagement() {
   return (
     <div className="min-h-screen bg-gray-100 p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Product Management</h1>
+        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Product Management</h1>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
-            <strong className="font-bold">Error: </strong>
-            <span className="block sm:inline">{error}</span>
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg shadow-md">
+            <span className="font-semibold">Error:</span> {error}
           </div>
         )}
 
-        <div className="bg-white shadow-lg rounded-xl p-6 md:p-8 mb-8">
+        <div className="bg-white shadow-2xl rounded-lg p-6 md:p-8 mb-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Add New Product</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:space-x-6">
@@ -76,16 +75,11 @@ export default function ProductManagement() {
                     id="title"
                     value={newProduct.title}
                     onChange={(e) => setNewProduct({ ...newProduct, title: e.target.value })}
-                    className="peer block w-full px-4 py-3 text-gray-700 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-300 rounded-lg transition-all duration-200"
+                    className="peer block w-full px-4 py-3 text-gray-700 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 ease-in-out"
                     placeholder="Enter product title"
                     required
                   />
-                  <label
-                    htmlFor="title"
-                    className="absolute left-4 top-3 text-gray-500 text-sm transition-all duration-200 peer-placeholder-shown:top-6 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-3 peer-focus:text-indigo-500 peer-focus:text-sm"
-                  >
-                    Product Title
-                  </label>
+           
                 </div>
               </div>
               <div className="flex-1">
@@ -98,16 +92,11 @@ export default function ProductManagement() {
                     id="price"
                     value={newProduct.price}
                     onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                    className="peer block w-full px-4 py-3 text-gray-700 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-300 rounded-lg transition-all duration-200"
+                    className="peer block w-full px-4 py-3 text-gray-700 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 ease-in-out"
                     placeholder="Enter product price"
                     required
                   />
-                  <label
-                    htmlFor="price"
-                    className="absolute left-4 top-3 text-gray-500 text-sm transition-all duration-200 peer-placeholder-shown:top-6 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-3 peer-focus:text-indigo-500 peer-focus:text-sm"
-                  >
-                    Price ($)
-                  </label>
+                 
                 </div>
               </div>
             </div>
@@ -121,22 +110,17 @@ export default function ProductManagement() {
                   id="description"
                   value={newProduct.description}
                   onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                  className="peer block w-full px-4 py-3 text-gray-700 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-300 rounded-lg transition-all duration-200"
+                  className="peer block w-full px-4 py-3 text-gray-700 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 border border-gray-300 rounded-lg shadow-sm transition-all duration-300 ease-in-out"
                   placeholder="Enter product description"
                   required
                 />
-                <label
-                  htmlFor="description"
-                  className="absolute left-4 top-3 text-gray-500 text-sm transition-all duration-200 peer-placeholder-shown:top-6 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-3 peer-focus:text-indigo-500 peer-focus:text-sm"
-                >
-                  Product Description
-                </label>
+              
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
+              className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-300 ease-in-out transform hover:scale-105"
               disabled={loading}
             >
               {loading ? 'Adding...' : 'Add Product'}
@@ -153,7 +137,10 @@ export default function ProductManagement() {
           ) : products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
               {products.map((product) => (
-                <div key={product.id} className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div
+                  key={product.id}
+                  className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 transform hover:scale-105"
+                >
                   <div className="p-6">
                     <h3 className="text-xl font-semibold text-gray-800 mb-2">{product.title}</h3>
                     <p className="text-gray-600 mb-4">{product.description}</p>
