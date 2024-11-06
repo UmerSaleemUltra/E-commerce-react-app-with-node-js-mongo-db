@@ -1,120 +1,172 @@
-import React, { useState, useEffect } from 'react';
+'use client'
 
-const App = () => {
-  const [products, setProducts] = useState([]);
-  const [newProduct, setNewProduct] = useState({
-    title: '',
-    description: '',
-    price: '',
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+import React, { useState, useEffect } from 'react'
 
-  // Fetch products from the Vercel-hosted API
+export default function ProductManagement() {
+  const [products, setProducts] = useState([])
+  const [newProduct, setNewProduct] = useState({ title: '', description: '', price: '' })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('https://ecommerce-website-backend-with-nod-js-and-mongodb.vercel.app/products');
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data = await response.json();
-        setProducts(data.data);  // `data` contains the array of products
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchProducts()
+  }, [])
 
-    fetchProducts();
-  }, []);
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('https://ecommerce-website-backend-with-nod-js-and-mongodb.vercel.app/products/')
+      if (!response.ok) throw new Error('Failed to fetch products')
+      const data = await response.json()
+      setProducts(data.data)
+    } catch (error) {
+      setError('Failed to fetch products. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  // Handle the form submission for creating a new product
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    setLoading(true)
     try {
       const response = await fetch('https://ecommerce-website-backend-with-nod-js-and-mongodb.vercel.app/products/addproduct', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProduct),
-      });
+      })
 
-      if (!response.ok) {
-        throw new Error('Failed to create product');
-      }
+      if (!response.ok) throw new Error('Failed to create product')
 
-      const result = await response.json();
+      const result = await response.json()
       if (result.message === 'Product added successfully!') {
-        setProducts([...products, newProduct]); // Add the new product to the product list
-        setNewProduct({ title: '', description: '', price: '' }); // Reset the form
+        setProducts([...products, { ...newProduct, id: result.id }])
+        setNewProduct({ title: '', description: '', price: '' })
+        setError(null)
       }
     } catch (error) {
-      setError(error.message);
+      setError('Failed to add product. Please try again.')
+    } finally {
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto py-8">
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Product List</h1>
+    <div className="min-h-screen bg-gray-100 p-6 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Product Management</h1>
 
-        {/* Display error or loading state */}
-        {loading && <p className="text-center text-blue-500">Loading...</p>}
-        {error && <p className="text-center text-red-500">{error}</p>}
-
-        {/* Product Form */}
-        <form onSubmit={handleSubmit} className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add New Product</h2>
-          <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Product Title"
-              value={newProduct.title}
-              onChange={(e) => setNewProduct({ ...newProduct, title: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-            />
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{error}</span>
           </div>
-          <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Product Description"
-              value={newProduct.description}
-              onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-            />
-          </div>
-          <div className="mb-4">
-            <input
-              type="number"
-              placeholder="Product Price"
-              value={newProduct.price}
-              onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-              className="w-full p-2 border border-gray-300 rounded-lg"
-            />
-          </div>
-          <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded-lg">Add Product</button>
-        </form>
-
-        {/* Product List */}
-        {products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product, index) => (
-              <div key={index} className="bg-white p-4 rounded-lg shadow-lg">
-                <h2 className="text-xl font-semibold text-gray-800">{product.title}</h2>
-                <p className="text-gray-600 mt-2">{product.description}</p>
-                <p className="text-gray-900 mt-4 font-bold">${product.price}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-center text-gray-500">No products available</p>
         )}
+
+        <div className="bg-white shadow-lg rounded-xl p-6 md:p-8 mb-8">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Add New Product</h2>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:space-x-6">
+              <div className="flex-1">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                  Product Title
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="title"
+                    value={newProduct.title}
+                    onChange={(e) => setNewProduct({ ...newProduct, title: e.target.value })}
+                    className="peer block w-full px-4 py-3 text-gray-700 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-300 rounded-lg transition-all duration-200"
+                    placeholder="Enter product title"
+                    required
+                  />
+                  <label
+                    htmlFor="title"
+                    className="absolute left-4 top-3 text-gray-500 text-sm transition-all duration-200 peer-placeholder-shown:top-6 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-3 peer-focus:text-indigo-500 peer-focus:text-sm"
+                  >
+                    Product Title
+                  </label>
+                </div>
+              </div>
+              <div className="flex-1">
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+                  Price ($)
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    id="price"
+                    value={newProduct.price}
+                    onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                    className="peer block w-full px-4 py-3 text-gray-700 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-300 rounded-lg transition-all duration-200"
+                    placeholder="Enter product price"
+                    required
+                  />
+                  <label
+                    htmlFor="price"
+                    className="absolute left-4 top-3 text-gray-500 text-sm transition-all duration-200 peer-placeholder-shown:top-6 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-3 peer-focus:text-indigo-500 peer-focus:text-sm"
+                  >
+                    Price ($)
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                Product Description
+              </label>
+              <div className="relative">
+                <textarea
+                  id="description"
+                  value={newProduct.description}
+                  onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                  className="peer block w-full px-4 py-3 text-gray-700 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-300 rounded-lg transition-all duration-200"
+                  placeholder="Enter product description"
+                  required
+                />
+                <label
+                  htmlFor="description"
+                  className="absolute left-4 top-3 text-gray-500 text-sm transition-all duration-200 peer-placeholder-shown:top-6 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-3 peer-focus:text-indigo-500 peer-focus:text-sm"
+                >
+                  Product Description
+                </label>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
+              disabled={loading}
+            >
+              {loading ? 'Adding...' : 'Add Product'}
+            </button>
+          </form>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Product List</h2>
+          {loading && !products.length ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            </div>
+          ) : products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+              {products.map((product) => (
+                <div key={product.id} className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{product.title}</h3>
+                    <p className="text-gray-600 mb-4">{product.description}</p>
+                    <p className="text-2xl font-bold text-indigo-600">${product.price}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">No products available</p>
+          )}
+        </div>
       </div>
     </div>
-  );
-};
-
-export default App;
+  )
+}
